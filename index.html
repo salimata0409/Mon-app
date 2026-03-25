@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mon espace</title>
+
+<style>
+body {
+    font-family: Arial, sans-serif;
+    background: #0c0a14;
+    color: white;
+    text-align: center;
+    padding: 20px;
+}
+
+.card {
+    background: #1e1b2e;
+    padding: 20px;
+    border-radius: 15px;
+    margin-top: 20px;
+}
+
+button {
+    background: #7b5cff;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    color: white;
+    margin-top: 10px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>🌿 Mon espace personnel</h1>
+
+<div class="card">
+<h2>Routine du jour</h2>
+<p>Respiration + calme</p>
+<button onclick="alert('Tu es sur la bonne voie ❤️')">Valider</button>
+</div>
+
+<div class="card">
+<h2>Journal</h2>
+<textarea id="note" placeholder="Écris ici..." style="width:100%;height:100px;"></textarea>
+<button onclick="save()">Sauvegarder</button>
+</div>
+
+<script>
+function save() {
+    let note = document.getElementById("note").value;
+    localStorage.setItem("note", note);
+    alert("Sauvegardé !");
+}
+
+window.onload = function() {
+    document.getElementById("note").value = localStorage.getItem("note") || "";
+}
+</script>
+
+</body>
+</html>

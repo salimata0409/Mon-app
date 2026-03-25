@@ -1,55 +1,59 @@
-219"}
 <!DOCTYPE html>
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Calme & recentrage</title>
+<title>Calme & Recentrage</title>
 
 <style>
 body{
 margin:0;
-font-family:Arial;
+font-family:-apple-system, BlinkMacSystemFont;
 background:#0c0a14;
 color:white;
 }
 
 header{
-padding:20px;
+padding:25px;
 text-align:center;
 background:linear-gradient(135deg,#7b5cff,#c9a7ff);
+font-weight:bold;
 }
 
 .container{
 padding:15px;
+padding-bottom:80px;
 }
 
 .card{
 background:#1e1b2e;
-padding:15px;
-margin:10px 0;
-border-radius:15px;
+padding:18px;
+margin:12px 0;
+border-radius:18px;
+box-shadow:0 4px 20px rgba(0,0,0,0.3);
 }
 
 h2{
-margin-top:0;
+margin:0 0 10px 0;
 }
 
 input, textarea{
 width:100%;
-padding:10px;
-border-radius:10px;
+padding:12px;
+border-radius:12px;
 border:none;
 margin-top:10px;
+font-size:16px;
 }
 
 button{
-margin-top:10px;
-padding:10px;
+margin-top:12px;
+padding:12px;
 border:none;
-border-radius:10px;
-background:#7b5cff;
+border-radius:12px;
+background:linear-gradient(135deg,#7b5cff,#c9a7ff);
 color:white;
+font-size:16px;
 width:100%;
 }
 
@@ -59,12 +63,14 @@ bottom:0;
 width:100%;
 display:flex;
 background:#1e1b2e;
+border-top:1px solid #333;
 }
 
 .nav button{
 flex:1;
 background:none;
 color:white;
+font-size:14px;
 }
 
 .section{
@@ -74,29 +80,45 @@ display:none;
 .active{
 display:block;
 }
+
+.badge{
+background:#7b5cff;
+padding:6px 10px;
+border-radius:10px;
+display:inline-block;
+margin-top:8px;
+font-size:12px;
+}
+
+.urgent{
+background:#ff4d6d;
+}
 </style>
 </head>
 
 <body>
 
 <header>
-<h1>🌿 Calme & recentrage</h1>
-<p>Ton espace personnel</p>
+🌿 Calme & Recentrage
+<div style="font-size:14px;font-weight:normal">Ton espace mental</div>
 </header>
 
 <div class="container">
 
+<!-- ACCUEIL -->
 <div id="home" class="section active">
+
 <div class="card">
 <h2>Humeur</h2>
-<input id="humeur">
+<input id="humeur" placeholder="Comment tu te sens ?">
 <button onclick="saveHumeur()">Enregistrer</button>
 </div>
 
 <div class="card">
-<h2>Journal</h2>
-<textarea id="journal"></textarea>
-<button onclick="saveJournal()">Sauvegarder</button>
+<h2>Routine du jour</h2>
+<p>Respiration + recentrage</p>
+<button onclick="validateRoutine()">Valider</button>
+<span id="routineStatus"></span>
 </div>
 
 <div class="card">
@@ -104,20 +126,42 @@ display:block;
 <p id="count">0 jours clean</p>
 <button onclick="addDay()">+1 jour</button>
 </div>
+
 </div>
 
+<!-- JOURNAL -->
 <div id="journalPage" class="section">
 <div class="card">
-<h2>Notes</h2>
-<textarea id="note"></textarea>
-<button onclick="saveNote()">Sauvegarder</button>
+<h2>Journal</h2>
+<textarea id="journal" placeholder="Écris ce que tu ressens..."></textarea>
+<button onclick="saveJournal()">Sauvegarder</button>
 </div>
 </div>
 
+<!-- VICTOIRES -->
+<div id="victories" class="section">
+<div class="card">
+<h2>Mes victoires</h2>
+<input id="victoryInput" placeholder="Une petite victoire ?">
+<button onclick="addVictory()">Ajouter</button>
+<ul id="victoryList"></ul>
+</div>
+</div>
+
+<!-- STATS -->
 <div id="stats" class="section">
 <div class="card">
 <h2>Stats</h2>
 <p id="statText"></p>
+</div>
+</div>
+
+<!-- MODE URGENCE -->
+<div id="urgent" class="section">
+<div class="card urgent">
+<h2>⚠️ Stop</h2>
+<p>Respire. Bois de l’eau. Reviens à toi.</p>
+<button onclick="calm()">Je me calme</button>
 </div>
 </div>
 
@@ -126,7 +170,9 @@ display:block;
 <div class="nav">
 <button onclick="show('home')">Accueil</button>
 <button onclick="show('journalPage')">Journal</button>
+<button onclick="show('victories')">Victoires</button>
 <button onclick="show('stats')">Stats</button>
+<button onclick="show('urgent')">Urgence</button>
 </div>
 
 <script>
@@ -137,42 +183,61 @@ document.getElementById(id).classList.add('active');
 }
 
 function saveHumeur(){
-localStorage.setItem("humeur",document.getElementById("humeur").value);
+localStorage.setItem("humeur",humeur.value);
 alert("Enregistré");
 }
 
 function saveJournal(){
-localStorage.setItem("journal",document.getElementById("journal").value);
+localStorage.setItem("journal",journal.value);
 alert("Sauvegardé");
-}
-
-function saveNote(){
-localStorage.setItem("note",document.getElementById("note").value);
-alert("Ok");
 }
 
 function addDay(){
 let c=localStorage.getItem("count")||0;
 c++;
 localStorage.setItem("count",c);
-document.getElementById("count").innerText=c+" jours clean";
+count.innerText=c+" jours clean";
 updateStats();
+}
+
+function validateRoutine(){
+localStorage.setItem("routine","ok");
+routineStatus.innerText="✔️ validée";
+}
+
+function addVictory(){
+let v=victoryInput.value;
+if(!v)return;
+let list=JSON.parse(localStorage.getItem("victories")||"[]");
+list.push(v);
+localStorage.setItem("victories",JSON.stringify(list));
+victoryInput.value="";
+loadVictories();
+}
+
+function loadVictories(){
+let list=JSON.parse(localStorage.getItem("victories")||"[]");
+victoryList.innerHTML=list.map(v=>"<li>"+v+"</li>").join("");
 }
 
 function updateStats(){
 let c=localStorage.getItem("count")||0;
-document.getElementById("statText").innerText="Tu avances depuis "+c+" jours 🔥";
+statText.innerText="Tu tiens depuis "+c+" jours 🔥";
+}
+
+function calm(){
+alert("Respire profondément. Tu es en contrôle.");
 }
 
 window.onload=function(){
-document.getElementById("humeur").value=localStorage.getItem("humeur")||"";
-document.getElementById("journal").value=localStorage.getItem("journal")||"";
-document.getElementById("note").value=localStorage.getItem("note")||"";
-document.getElementById("count").innerText=(localStorage.getItem("count")||0)+" jours clean";
+humeur.value=localStorage.getItem("humeur")||"";
+journal.value=localStorage.getItem("journal")||"";
+count.innerText=(localStorage.getItem("count")||0)+" jours clean";
+loadVictories();
 updateStats();
 }
 
 </script>
 
 </body>
-</
+</htm
